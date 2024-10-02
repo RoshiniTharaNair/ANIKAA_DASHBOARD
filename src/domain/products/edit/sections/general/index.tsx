@@ -1,5 +1,5 @@
 import { Product, SalesChannel } from "@medusajs/medusa"
-import React from "react"
+import React, { useEffect, useState} from "react"
 import Badge from "../../../../../components/fundamentals/badge"
 import FeatureToggle from "../../../../../components/fundamentals/feature-toggle"
 import ChannelsIcon from "../../../../../components/fundamentals/icons/channels-icon"
@@ -57,6 +57,14 @@ const GeneralSection = ({ product }: Props) => {
     })
   }
 
+  useEffect(() => {
+    if (product) {
+      const images = product.images || []
+      const variants = product.variants || []
+      const categories = product.categories || []
+    }
+  }, [product])
+
   return (
     <>
       <Section
@@ -95,7 +103,7 @@ const GeneralSection = ({ product }: Props) => {
 
 type DetailProps = {
   title: string
-  value?: string | null
+  value?: string[] | string | null
 }
 
 const Detail = ({ title, value }: DetailProps) => {
@@ -115,6 +123,7 @@ const ProductDetails = ({ product }: Props) => {
       <Detail title="Handle" value={product.handle} />
       <Detail title="Type" value={product.type?.value} />
       <Detail title="Collection" value={product.collection?.title} />
+      <Detail title= "Category" value={product.categories?.map((c) => c.name)} />
       <Detail
         title="Discountable"
         value={product.discountable ? "True" : "False"}

@@ -37,19 +37,51 @@ export const useVariantsTableColumns = () => {
           )
         },
       },
+      // {
+      //   Header: "EAN",
+      //   id: "ean",
+      //   accessor: "ean",
+      //   maxWidth: 264,
+      //   Cell: ({ cell }) => {
+      //     return cell.value ? (
+      //       cell.value
+      //     ) : (
+      //       <span className="text-grey-50">-</span>
+      //     )
+      //   },
+      // },
       {
-        Header: "EAN",
-        id: "ean",
-        accessor: "ean",
-        maxWidth: 264,
+        Header: "Price",
+        id: "price",
+        accessor: (row) => ({
+          amount: row.prices[0]?.amount / 100 || null, // Assuming price is in cents
+          currency: row.prices[0]?.currency_code || "inr", // Default to INR if not provided
+        }),
         Cell: ({ cell }) => {
-          return cell.value ? (
-            cell.value
+          const getCurrencySymbol = (currencyCode) => {
+            switch (currencyCode.toLowerCase()) {
+              case "inr":
+                return "₹";
+              case "usd":
+                return "$";
+              case "eur":
+                return "€";
+              // Add more currencies as needed
+              default:
+                return currencyCode.toUpperCase(); // Default to showing the code if symbol not found
+            }
+          };
+      
+          return cell.value.amount !== null ? (
+            <span>
+              {getCurrencySymbol(cell.value.currency)}
+              {cell.value.amount.toFixed(2)}
+            </span>
           ) : (
             <span className="text-grey-50">-</span>
-          )
+          );
         },
-      },
+      },      
       {
         Header: () => {
           return (
@@ -68,7 +100,7 @@ export const useVariantsTableColumns = () => {
             </div>
           )
         },
-      },
+      }
     ],
     []
   )

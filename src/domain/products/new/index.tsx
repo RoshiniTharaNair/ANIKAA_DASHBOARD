@@ -305,6 +305,9 @@ const createPayload = (
           value: t,
         }))
       : undefined,
+    categories: data.organize.categories?.length
+      ? data.organize.categories.map((id) => ({ id }))
+      : undefined,
     origin_country: data.customs.origin_country?.value || undefined,
     options: data.variants.options.map((o) => ({
       title: o.title,
@@ -374,6 +377,7 @@ const createBlank = (): NewProductForm => {
       collection: null,
       tags: null,
       type: null,
+      categories: null,
     },
     salesChannels: {
       channels: [],

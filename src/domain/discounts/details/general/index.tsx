@@ -1,48 +1,48 @@
-import { Discount } from "@medusajs/medusa"
-import { useAdminDeleteDiscount, useAdminUpdateDiscount } from "medusa-react"
-import React, { useState } from "react"
-import { useNavigate } from "react-router-dom"
-import Badge from "../../../../components/fundamentals/badge"
-import EditIcon from "../../../../components/fundamentals/icons/edit-icon"
-import TrashIcon from "../../../../components/fundamentals/icons/trash-icon"
-import { ActionType } from "../../../../components/molecules/actionables"
-import StatusSelector from "../../../../components/molecules/status-selector"
-import BodyCard from "../../../../components/organisms/body-card"
-import useImperativeDialog from "../../../../hooks/use-imperative-dialog"
-import useNotification from "../../../../hooks/use-notification"
-import { getErrorMessage } from "../../../../utils/error-messages"
-import { formatAmountWithSymbol } from "../../../../utils/prices"
-import EditGeneral from "./edit-general"
+import { Discount } from "@medusajs/medusa";
+import { useAdminDeleteDiscount, useAdminUpdateDiscount } from "medusa-react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Badge from "../../../../components/fundamentals/badge";
+import EditIcon from "../../../../components/fundamentals/icons/edit-icon";
+import TrashIcon from "../../../../components/fundamentals/icons/trash-icon";
+import { ActionType } from "../../../../components/molecules/actionables";
+import StatusSelector from "../../../../components/molecules/status-selector";
+import BodyCard from "../../../../components/organisms/body-card";
+import useImperativeDialog from "../../../../hooks/use-imperative-dialog";
+import useNotification from "../../../../hooks/use-notification";
+import { getErrorMessage } from "../../../../utils/error-messages";
+import { formatAmountWithSymbol } from "../../../../utils/prices";
+import EditGeneral from "./edit-general";
 
 type GeneralProps = {
-  discount: Discount
-}
+  discount: Discount;
+};
 
 const General: React.FC<GeneralProps> = ({ discount }) => {
-  const dialog = useImperativeDialog()
-  const navigate = useNavigate()
-  const notification = useNotification()
-  const updateDiscount = useAdminUpdateDiscount(discount.id)
-  const deletediscount = useAdminDeleteDiscount(discount.id)
-  const [showmModal, setShowModal] = useState(false)
+  const dialog = useImperativeDialog();
+  const navigate = useNavigate();
+  const notification = useNotification();
+  const updateDiscount = useAdminUpdateDiscount(discount.id);
+  const deletediscount = useAdminDeleteDiscount(discount.id);
+  const [showmModal, setShowModal] = useState(false);
 
   const onDelete = async () => {
     const shouldDelete = await dialog({
       heading: "Delete Promotion",
       text: "Are you sure you want to delete this promotion?",
-    })
+    });
     if (shouldDelete) {
       deletediscount.mutate(undefined, {
         onSuccess: () => {
-          notification("Success", "Promotion deleted successfully", "success")
-          navigate("/a/discounts/")
+          notification("Success", "Promotion deleted successfully", "success");
+          navigate("/a/discounts/");
         },
         onError: (err) => {
-          notification("Error", getErrorMessage(err), "error")
+          notification("Error", getErrorMessage(err), "error");
         },
-      })
+      });
     }
-  }
+  };
 
   const onStatusChange = async () => {
     updateDiscount.mutate(
@@ -51,19 +51,19 @@ const General: React.FC<GeneralProps> = ({ discount }) => {
       },
       {
         onSuccess: ({ discount: { is_disabled } }) => {
-          const pastTense = !is_disabled ? "published" : "drafted"
+          const pastTense = !is_disabled ? "published" : "drafted";
           notification(
             "Success",
             `Discount ${pastTense} successfully`,
             "success"
-          )
+          );
         },
         onError: (err) => {
-          notification("Error", getErrorMessage(err), "error")
+          notification("Error", getErrorMessage(err), "error");
         },
       }
-    )
-  }
+    );
+  };
 
   const actionables: ActionType[] = [
     {
@@ -77,14 +77,14 @@ const General: React.FC<GeneralProps> = ({ discount }) => {
       variant: "danger",
       icon: <TrashIcon size={20} />,
     },
-  ]
+  ];
 
   return (
     <>
       <BodyCard
         actionables={actionables}
         title={discount.code}
-        subtitle={discount.rule.description}
+        subtitle={discount.rule?.description || "No description available"} // Handle if rule or description is undefined
         forceDropdown
         className="min-h-[200px]"
         status={
@@ -115,8 +115,11 @@ const General: React.FC<GeneralProps> = ({ discount }) => {
             </span>
           </div>
           <div className="border-l border-grey-20 pl-6 ml-12">
+            {/* Check if discount.regions is defined and has length */}
             <h2 className="inter-xlarge-regular text-grey-90">
-              {discount.regions.length.toLocaleString("en-US")}
+              {discount.regions && discount.regions.length > 0
+                ? discount.regions.length.toLocaleString("en-US")
+                : "N/A"}
             </h2>
             <span className="inter-small-regular text-grey-50">
               Valid Regions
@@ -136,25 +139,29 @@ const General: React.FC<GeneralProps> = ({ discount }) => {
         <EditGeneral discount={discount} onClose={() => setShowModal(false)} />
       )}
     </>
-  )
-}
+  );
+};
 
 const getPromotionDescription = (discount: Discount) => {
+  if (!discount.rule) {
+    return "No promotion description available";
+  }
+  
   switch (discount.rule.type) {
     case "fixed":
       return (
         <div className="flex items-baseline">
           <h2 className="inter-xlarge-regular">
             {formatAmountWithSymbol({
-              currency: discount.regions[0].currency_code,
+              currency: discount.regions?.[0]?.currency_code || "USD",
               amount: discount.rule.value,
             })}
           </h2>
           <span className="inter-base-regular text-grey-50 ml-1">
-            {discount.regions[0].currency_code.toUpperCase()}
+            {discount.regions?.[0]?.currency_code?.toUpperCase() || "USD"}
           </span>
         </div>
-      )
+      );
     case "percentage":
       return (
         <div className="flex items-baseline">
@@ -163,14 +170,14 @@ const getPromotionDescription = (discount: Discount) => {
           </h2>
           <span className="inter-base-regular text-grey-50 ml-1">%</span>
         </div>
-      )
+      );
     case "free_shipping":
       return (
         <h2 className="inter-xlarge-regular text-grey-90">{`FREE SHIPPING`}</h2>
-      )
+      );
     default:
-      return "Unknown discount type"
+      return "Unknown discount type";
   }
-}
+};
 
-export default General
+export default General;

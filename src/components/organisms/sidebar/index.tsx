@@ -9,6 +9,7 @@ import GiftIcon from "../../fundamentals/icons/gift-icon"
 import SaleIcon from "../../fundamentals/icons/sale-icon"
 import TagIcon from "../../fundamentals/icons/tag-icon"
 import UsersIcon from "../../fundamentals/icons/users-icon"
+import SwatchIcon from "../../fundamentals/icons/swatch-icon"
 import SidebarMenuItem from "../../molecules/sidebar-menu-item"
 import UserMenu from "../../molecules/user-menu"
 
@@ -63,6 +64,12 @@ const Sidebar: React.FC = () => {
             text={"Products"}
             triggerHandler={triggerHandler}
           />
+           <SidebarMenuItem
+              pageLink={"/a/product-categories"}
+              icon={<SwatchIcon size={ICON_SIZE} />}
+              triggerHandler={triggerHandler}
+              text={"Categories"}
+            />
           <SidebarMenuItem
             pageLink={"/a/customers"}
             icon={<UsersIcon size={ICON_SIZE} />}

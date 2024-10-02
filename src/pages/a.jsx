@@ -8,6 +8,7 @@ import SEO from "../components/seo"
 import Layout from "../components/templates/layout"
 import AnalyticsProvider from "../context/analytics"
 import Collections from "../domain/collections"
+import ProductCategories from "../domain/product-categories";
 import Customers from "../domain/customers"
 import Discounts from "../domain/discounts"
 import GiftCards from "../domain/gift-cards"
@@ -42,6 +43,7 @@ const DashboardRoutes = () => {
           <Routes className="h-full">
             <Route path="oauth/:app_name" element={<Oauth />} />
             <Route path="products/*" element={<ProductsRoute />} />
+            <Route path="product-categories/*" element={<ProductCategories />} />
             <Route path="collections/*" element={<Collections />} />
             <Route path="gift-cards/*" element={<GiftCards />} />
             <Route path="orders/*" element={<Orders />} />
